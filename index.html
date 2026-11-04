@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Processo de Vendas Pro — Monitor Comercial</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif; background: linear-gradient(160deg, #e9f6fb 0%, #e3f4f4 45%, #eef9ef 100%); color: #0f172a; }
+
+  header { background: linear-gradient(135deg, #062636 0%, #0b5a74 32%, #0d8ca8 62%, #10b3a0 100%); color: #fff; }
+  .hd { max-width: 1120px; margin: 0 auto; padding: 26px 22px 36px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 18px; }
+  .eyebrow { color: #f5c542; font-size: .72rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+  h1 { font-size: clamp(1.7rem, 4vw, 2.6rem); font-weight: 900; line-height: 1.08; margin-top: 6px; }
+  h1 .gold { color: #f5c542; }
+  .lead { color: #d2f4f8; font-size: .95rem; margin-top: 10px; max-width: 660px; line-height: 1.5; }
+  nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .nav-btn { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.28); padding: 8px 15px; border-radius: 999px; font-size: .78rem; font-weight: 700; cursor: pointer; transition: all .18s ease; }
+  .nav-btn:hover { background: rgba(255,255,255,.3); transform: translateY(-1px); }
+
+  main { max-width: 1120px; margin: 0 auto; padding: 0 22px 40px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: -20px; }
+  .kpi { border-radius: 18px; padding: 18px 18px 16px; color: #fff; box-shadow: 0 14px 30px -14px rgba(6,51,70,.55); position: relative; overflow: hidden; }
+  .kpi::after { content: ''; position: absolute; right: -30px; bottom: -30px; width: 110px; height: 110px; border-radius: 50%; background: rgba(255,255,255,.12); }
+  .kpi .k-label { color: #fde9b8; font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+  .kpi .k-num { font-size: 2rem; font-weight: 900; margin-top: 6px; line-height: 1; }
+  .kpi .k-sub { color: #e6f7fb; font-size: .78rem; margin-top: 6px; }
+  .kpi.deep { background: linear-gradient(135deg, #083d56, #0e7490); }
+  .kpi.turq { background: linear-gradient(135deg, #0891b2, #14b8a6); }
+  .kpi.teal { background: linear-gradient(135deg, #0f766e, #2dd4bf); }
+  .kpi.gold { background: linear-gradient(135deg, #92600a, #eab308); }
+  .kpi.gold .k-label { color: #5b3d00; }
+  .kpi.gold .k-num { color: #1c1500; }
+  .kpi.gold .k-sub { color: #3f2c00; }
+
+  section { margin-top: 30px; }
+  .section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .section-head h2 { font-size: 1.22rem; font-weight: 800; color: #0c4a6e; }
+  .section-head .line { flex: 1; height: 2px; background: linear-gradient(90deg, #f5c542, transparent); border-radius: 2px; }
+  .card { background: #fff; border-radius: 18px; border: 1px solid #dbeef2; box-shadow: 0 10px 26px -18px rgba(8,51,68,.35); padding: 22px; }
+
+  .funil { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .chip { background: #f4fbfd; border: 1px solid #cde9ee; border-radius: 14px; padding: 12px; text-align: left; cursor: pointer; transition: all .18s ease; }
+  .chip:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -12px rgba(8,51,68,.4); border-color: #14b8a6; }
+  .chip.active { background: linear-gradient(135deg, #0891b2, #14b8a6); border-color: transparent; }
+  .chip-nome { font-size: .8rem; font-weight: 800; color: #0e7490; display: block; }
+  .chip.active .chip-nome { color: #fff; }
+  .chip-count { font-size: 1.25rem; font-weight: 900; color: #0f172a; display: block; margin-top: 2px; }
+  .chip.active .chip-count { color: #fff; }
+  .chip-valor { font-size: .74rem; font-weight: 700; color: #f59e0b; display: block; margin-top: 2px; }
+  .chip.active .chip-valor { color: #fde68a; }
+
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  label { display: flex; flex-direction: column; gap: 6px; font-size: .78rem; font-weight: 700; color: #334155; }
+  input, select { width: 100%; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; font-size: .9rem; color: #0f172a; background: #fff; outline: none; transition: border .15s ease, box-shadow .15s ease; font-family: inherit; }
+  input:focus, select:focus { border-color: #06b6d4; box-shadow: 0 0 0 3px rgba(6,182,212,.18); }
+  .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; align-items: center; }
+  .btn-primary { background: linear-gradient(135deg, #0891b2, #14b8a6); color: #fff; border: none; padding: 11px 20px; border-radius: 10px; font-weight: 800; font-size: .88rem; cursor: pointer; transition: all .18s ease; box-shadow: 0 8px 18px -8px rgba(8,145,178,.7); }
+  .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.07); }
+  .btn-ghost { background: #fff; color: #0e7490; border: 1px solid #cde9ee; padding: 11px 18px; border-radius: 10px; font-weight: 700; font-size: .88rem; cursor: pointer; transition: all .18s ease; }
+  .btn-ghost:hover { background: #f0fbfd; }
+  .btn-danger { background: linear-gradient(135deg, #dc2626, #f97316); color: #fff; border: none; padding: 11px 18px; border-radius: 10px; font-weight: 700; font-size: .86rem; cursor: pointer; transition: all .18s ease; }
+  .btn-danger:hover { transform: translateY(-2px); }
+  .msg { margin-top: 12px; font-size: .85rem; font-weight: 700; color: #0f766e; min-height: 18px; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .toolbar .search { flex: 1; min-width: 220px; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: .9rem; }
+  .toolbar select { width: auto; min-width: 170px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: .9rem; }
+  .toolbar-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+  .table-wrap { overflow-x: auto; margin-top: 14px; border-radius: 12px; border: 1px solid #e6f0f3; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; min-width: 760px; }
+  thead th { background: linear-gradient(135deg, #0b5a74, #0d8ca8); color: #fff; text-align: left; padding: 12px; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; position: sticky; top: 0; }
+  tbody td { padding: 12px; border-top: 1px solid #eef5f7; vertical-align: top; }
+  tbody tr:hover { background: #f4fbfd; }
+  .sub-line { font-size: .72rem; color: #64748b; font-weight: 500; margin-top: 2px; }
+  .num { font-weight: 800; color: #0f766e; white-space: nowrap; }
+  .empty { text-align: center; color: #94a3b8; padding: 26px; font-size: .9rem; }
+  .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: .7rem; font-weight: 800; white-space: nowrap; }
+  .b-prosp { background: #e0f2fe; color: #0369a1; }
+  .b-qualif { background: #cffafe; color: #0e7490; }
+  .b-apres { background: #dbeafe; color: #1d4ed8; }
+  .b-matura { background: #e0e7ff; color: #4338ca; }
+  .b-negoc { background: #f3e8ff; color: #7e22ce; }
+  .b-fecha { background: #d1fae5; color: #047857; }
+  .b-posvenda { background: #fef3c7; color: #b45309; }
+  .actions { display: flex; gap: 6px; }
+  .act { border: none; padding: 6px 10px; border-radius: 8px; font-size: .72rem; font-weight: 700; cursor: pointer; transition: all .15s ease; font-family: inherit; }
+  .act.edit { background: #e0f7fa; color: #0e7490; }
+  .act.edit:hover { background: #bff0f5; }
+  .act.del { background: #fee2e2; color: #b91c1c; }
+  .act.del:hover { background: #fecaca; }
+
+  footer { text-align: center; margin-top: 36px; color: #5b7280; font-size: .78rem; }
+  footer .gold { color: #b45309; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd">
+    <div>
+      <div class="eyebrow">📊 Painel Comercial • Processo de Vendas</div>
+      <h1>Funil de Vendas <span class="gold">Pro</span></h1>
+      <p class="lead">Monitore cada etapa — da prospecção ao pós-venda — com CRUD completo, KPIs em tempo real e visual premium. Gerencie, meça e aumente a lucratividade da sua operação.</p>
+    </div>
+    <nav>
+      <button class="nav-btn" onclick="go('kpis')">📌 KPIs</button>
+      <button class="nav-btn" onclick="go('funil')">🔹 Funil</button>
+      <button class="nav-btn" onclick="go('form')">➕ Cadastro</button>
+      <button class="nav-btn" onclick="go('tabela')">📋 Oportunidades</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="kpis" class="kpis">
+    <div class="kpi deep">
+      <div class="k-label">🎯 Negócios ativos</div>
+      <div class="k-num" id="kpi-total">0</div>
+      <div class="k-sub">no funil de vendas</div>
+    </div>
+    <div class="kpi turq">
+      <div class="k-label">💰 Valor em pipeline</div>
+      <div class="k-num" id="kpi-valor">R$ 0</div>
+      <div class="k-sub">etapas abertas</div>
+    </div>
+    <div class="kpi teal">
+      <div class="k-label">✅ Negócios fechados</div>
+      <div class="k-num" id="kpi-fechados">0</div>
+      <div class="k-sub">fechamento + pós-venda</div>
+    </div>
+    <div class="kpi gold">
+      <div class="k-label">📈 Taxa de conversão</div>
+      <div class="k-num" id="kpi-taxa">0%</div>
+      <div class="k-sub">fechados sobre o total</div>
+    </div>
+  </section>
+
+  <section id="funil">
+    <div class="section-head">
+      <h2>🔹 Etapas do Processo de Vendas</h2>
+      <div class="line"></div>
+    </div>
+    <div class="funil" id="funil"></div>
+  </section>
+
+  <section id="form">
+    <div class="section-head">
+      <h2>➕ Cadastro de Oportunidade</h2>
+      <div class="line"></div>
+    </div>
+    <div class="card">
+      <form id="frm" onsubmit="return salvar(event)">
+        <div class="grid2">
+          <label>Cliente *
+            <input id="f-cliente" placeholder="Nome do cliente">
+          </label>
+          <label>Empresa / Segmento
+            <input id="f-empresa" placeholder="Empresa ou segmento">
+          </label>
+          <label>Necessidade do cliente
+            <select id="f-necessidade"></select>
+          </label>
+          <label>Etapa do funil
+            <select id="f-etapa"></select>
+          </label>
+          <label>Valor estimado (R$) *
+            <input id="f-valor" type="number" min="0" step="0.01" placeholder="0,00">
+          </label>
+          <label>Previsão de fechamento
+            <input id="f-data" type="date">
+          </label>
+          <label>Responsável
+            <input id="f-responsavel" placeholder="Vendedor">
+          </label>
+          <label>Próximo passo
+            <input id="f-proximo" placeholder="Ação / follow-up">
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" id="btn-salvar">➕ Adicionar negócio</button>
+          <button type="button" class="btn-ghost" onclick="resetForm()">Cancelar</button>
+        </div>
+        <p class="msg" id="form-msg"></p>
+      </form>
+    </div>
+  </section>
+
+  <section id="tabela">
+    <div class="section-head">
+      <h2>📋 Oportunidades Monitoradas</h2>
+      <div class="line"></div>
+    </div>
+    <div class="card">
+      <div class="toolbar">
+        <input id="busca" class="search" placeholder="🔍 Buscar cliente, empresa ou responsável..." oninput="busca=this.value; renderTabela()">
+        <select id="filtro" onchange="filtroEtapa=this.value; renderFunil(); renderTabela()"></select>
+      </div>
+      <div class="toolbar-actions">
+        <button class="btn-danger" id="btn-limpar" onclick="limparTudo(this)">🗑️ Limpar todos os dados</button>
+        <button class="btn-ghost" onclick="carregarExemplo()">🔄 Restaurar dados de exemplo</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente / Empresa</th>
+              <th>Necessidade</th>
+              <th>Valor</th>
+              <th>Etapa</th>
+              <th>Previsão</th>
+              <th>Responsável</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="gold">Processo de Vendas Pro</span> — do papel para a prática. Prospecção • Qualificação • Apresentação • Maturação • Negociação • Fechamento • Pós-venda.
+  </footer>
+</main>
+
+<script>
+  const etapas = ['Prospecção', 'Qualificação', 'Apresentação', 'Maturação', 'Negociação', 'Fechamento', 'Pós-venda'];
+  const necessidades = [
+    'Redução de custo', 'Aumento de produtividade', 'Qualidade do produto',
+    'Prazo de entrega', 'Suporte técnico', 'Condição de pagamento',
+    'Consultoria / BI', 'Treinamento', 'Reposição de estoque', 'Outro'
+  ];
+  const slugMap = {
+    'Prospecção': 'prosp', 'Qualificação': 'qualif', 'Apresentação': 'apres',
+    'Maturação': 'matura', 'Negociação': 'negoc', 'Fechamento': 'fecha', 'Pós-venda': 'posvenda'
+  };
+
+  const seed = [
+    { id: 1, cliente: 'Transportadora Andrade', empresa: 'Frota com 120 veículos', necessidade: 'Redução de custo', valor: 185000, etapa: 'Negociação', data: '2026-11-20', responsavel: 'Osmar Nunes', proximo: 'Enviar proposta revisada' },
+    { id: 2, cliente: 'Auto Peças Manaus', empresa: 'Varejo de autopeças', necessidade: 'Reposição de estoque', valor: 42000, etapa: 'Prospecção', data: '2026-12-05', responsavel: 'Carlos Melo', proximo: 'Agendar visita comercial' },
+    { id: 3, cliente: 'Construtora Rio Negro', empresa: 'Obras pesadas', necessidade: 'Qualidade do produto', valor: 96000, etapa: 'Apresentação', data: '2026-11-28', responsavel: 'Osmar Nunes', proximo: 'Reunião de apresentação' },
+    { id: 4, cliente: 'Mineradora Aurífera', empresa: 'Mineração', necessidade: 'Suporte técnico', valor: 230000, etapa: 'Fechamento', data: '2026-11-10', responsavel: 'Osmar Nunes', proximo: 'Assinatura de contrato' },
+    { id: 5, cliente: 'Distribuidora Solimões', empresa: 'Atacado', necessidade: 'Condição de pagamento', valor: 54000, etapa: 'Maturação', data: '2026-12-15', responsavel: 'Ana Souza', proximo: 'Follow-up semanal' },
+    { id: 6, cliente: 'Cooperativa Agro Norte', empresa: 'Agronegócio', necessidade: 'Aumento de produtividade', valor: 78000, etapa: 'Qualificação', data: '2027-01-10', responsavel: 'Carlos Melo', proximo: 'Entrevista de qualificação' }
+  ];
+
+  let negocios = seed.map(x => ({ ...x }));
+  let editId = null;
+  var busca = '';
+  var filtroEtapa = '';
+  var clearArmed = false;
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function formatBR(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+  function abrev(v) {
+    if (v >= 1000000) return 'R$ ' + (v / 1000000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mi';
+    if (v >= 1000) return 'R$ ' + (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + ' mil';
+    return 'R$ ' + v.toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+  }
+  function fmtData(iso) {
+    if (!iso) return '—';
+    const [y, m, d] = iso.split('-');
+    return d + '/' + m + '/' + y;
+  }
+
+  function preencherSelects() {
+    $('f-etapa').innerHTML = etapas.map(e => `<option>${e}</option>`).join('');
+    $('f-necessidade').innerHTML = necessidades.map(n => `<option>${n}</option>`).join('');
+    $('filtro').innerHTML = `<option value="">Todas as etapas</option>` + etapas.map(e => `<option>${e}</option>`).join('');
+  }
+
+  function renderKPIs() {
+    const total = negocios.length;
+    const aberto = negocios.filter(n => !['Fechamento', 'Pós-venda'].includes(n.etapa));
+    const fechados = negocios.filter(n => ['Fechamento', 'Pós-venda'].includes(n.etapa)).length;
+    const valorAberto = aberto.reduce((s, n) => s + n.valor, 0);
+    const taxa = total ? Math.round((fechados / total) * 100) : 0;
+    $('kpi-total').textContent = total;
+    $('kpi-valor').textContent = abrev(valorAberto);
+    $('kpi-fechados').textContent = fechados;
+    $('kpi-taxa').textContent = taxa + '%';
+  }
+
+  function renderFunil() {
+    $('funil').innerHTML = etapas.map(et => {
+      const itens = negocios.filter(n => n.etapa === et);
+      const val = itens.reduce((s, n) => s + n.valor, 0);
+      const active = filtroEtapa === et ? ' active' : '';
+      return `<button class="chip${active}" data-etapa="${et}" onclick="filtrarEtapa(this.dataset.etapa)">
+        <span class="chip-nome">${et}</span>
+        <span class="chip-count">${itens.length} ${itens.length === 1 ? 'negócio' : 'negócios'}</span>
+        <span class="chip-valor">${val > 0 ? abrev(val) : '—'}</span>
+      </button>`;
+    }).join('');
+  }
+
+  function renderTabela() {
+    const q = busca.toLowerCase();
+    let lista = negocios.filter(n =>
+      n.cliente.toLowerCase().includes(q) ||
+      n.empresa.toLowerCase().includes(q) ||
+      n.responsavel.toLowerCase().includes(q)
+    );
+    if (filtroEtapa) lista = lista.filter(n => n.etapa === filtroEtapa);
+
+    const body = $('tbody');
+    if (lista.length === 0) {
+      body.innerHTML = `<tr><td colspan="7" class="empty">Nenhuma oportunidade encontrada. Cadastre um novo negócio acima. 📈</td></tr>`;
+      return;
+    }
+    body.innerHTML = lista.map(n => `
+      <tr>
+        <td><strong>${esc(n.cliente)}</strong><div class="sub-line">${esc(n.empresa)}</div></td>
+        <td>${esc(n.necessidade)}</td>
+        <td class="num">${formatBR(n.valor)}</td>
+        <td><span class="badge b-${slugMap[n.etapa]}">${n.etapa}</span></td>
+        <td>${fmtData(n.data)}</td>
+        <td>${esc(n.responsavel)}</td>
+        <td>
+          <div class="actions">
+            <button class="act edit" onclick="editar(${n.id})">✏️ Editar</button>
+            <button class="act del" onclick="excluir(${n.id}, this)">🗑️ Excluir</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  function render() {
+    renderKPIs();
+    renderFunil();
+    renderTabela();
+  }
+
+  function filtrarEtapa(et) {
+    filtroEtapa = filtroEtapa === et ? '' : et;
+    $('filtro').value = filtroEtapa;
+    renderFunil();
+    renderTabela();
+  }
+
+  function salvar(e) {
+    e.preventDefault();
+    const msg = $('form-msg');
+    const cliente = $('f-cliente').value.trim();
+    const valor = parseFloat($('f-valor').value);
+    if (!cliente) { msg.textContent = '⚠️ Informe o nome do cliente.'; return false; }
+    if (isNaN(valor) || valor < 0) { msg.textContent = '⚠️ Informe um valor válido.'; return false; }
+
+    const obj = {
+      id: editId ?? Date.now(),
+      cliente,
+      empresa: $('f-empresa').value.trim() || '—',
+      necessidade: $('f-necessidade').value,
+      valor,
+      etapa: $('f-etapa').value,
+      data: $('f-data').value,
+      responsavel: $('f-responsavel').value.trim() || '—',
+      proximo: $('f-proximo').value.trim() || '—'
+    };
+
+    if (editId) {
+      const i = negocios.findIndex(n => n.id === editId);
+      if (i > -1) negocios[i] = obj;
+      else negocios.unshift(obj);
+    } else {
+      negocios.unshift(obj);
+    }
+
+    resetForm();
+    render();
+    msg.textContent = '✅ Oportunidade salva com sucesso!';
+    setTimeout(() => { msg.textContent = ''; }, 3000);
+    $('tabela').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return false;
+  }
+
+  function resetForm() {
+    $('frm').reset();
+    editId = null;
+    $('btn-salvar').textContent = '➕ Adicionar negócio';
+    $('form-msg').textContent = '';
+    $('f-etapa').value = 'Prospecção';
+    $('f-necessidade').value = necessidades[0];
+  }
+
+  function editar(id) {
+    const n = negocios.find(x => x.id === id);
+    if (!n) return;
+    editId = id;
+    $('f-cliente').value = n.cliente;
+    $('f-empresa').value = n.empresa === '—' ? '' : n.empresa;
+    $('f-necessidade').value = n.necessidade;
+    $('f-etapa').value = n.etapa;
+    $('f-valor').value = n.valor;
+    $('f-data').value = n.data;
+    $('f-responsavel').value = n.responsavel === '—' ? '' : n.responsavel;
+    $('f-proximo').value = n.proximo === '—' ? '' : n.proximo;
+    $('btn-salvar').textContent = '💾 Atualizar negócio';
+    $('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function excluir(id, btn) {
+    if (btn.dataset.confirm !== '1') {
+      btn.dataset.confirm = '1';
+      btn.textContent = 'Confirmar?';
+      setTimeout(() => { btn.dataset.confirm = ''; btn.textContent = '🗑️ Excluir'; }, 2500);
+      return;
+    }
+    negocios = negocios.filter(n => n.id !== id);
+    if (editId === id) resetForm();
+    render();
+  }
+
+  function limparTudo(btn) {
+    if (!clearArmed) {
+      clearArmed = true;
+      btn.textContent = '⚠️ Clique novamente para confirmar';
+      setTimeout(() => { clearArmed = false; btn.textContent = '🗑️ Limpar todos os dados'; }, 3500);
+      return;
+    }
+    negocios = [];
+    clearArmed = false;
+    btn.textContent = '🗑️ Limpar todos os dados';
+    resetForm();
+    render();
+  }
+
+  function carregarExemplo() {
+    negocios = seed.map(x => ({ ...x }));
+    render();
+  }
+
+  function go(id) {
+    $(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  preencherSelects();
+  resetForm();
+  render();
+</script>
+</body>
+</html>
